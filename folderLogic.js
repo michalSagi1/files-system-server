@@ -4,42 +4,54 @@ const fileController = require("./DL/controllers/fileController");
 
 
 //יצירת תקייה
-const createFolder = async (folderName, type, dir) => {
+const createFolder = async (folderName, path) => {
     if (!isValidName(folderName)) throw { message: "error - name" }
-    if (fs.existsSync(folderName)) throw { message: "folder is already exist" };
-    const folder = { name: folderName, type, dir }
-    await fileController.create(folder)
+    if (fs.existsSync(`./${path}/${folderName}`)) throw { message: "folder is already exist" };
+    // const folder = { name: folderName, type, dir }
+    // await fileController.create(folder)
 
-    return (fs.mkdirSync(`root/${folderName}`), folder)
+    return (fs.mkdirSync(`./${path}/${folderName}`))
 
 };
 
 //שינוי שם תקיה
-const renameFolder = (folderNameOld, folderNameNew) => {
-    if (!isExist(folderNameOld)) throw { message: "File dosen't exist" };
-    fs.renameSync(`root/${folderNameOld}`, `root/${folderNameNew}`)
+const renameFolder = (folderNameOld, folderNameNew, path) => {
+    if (fs.existsSync(`./${path}/${folderNameNew}`)) throw { message: "Folder  is already exist" };
+    return (fs.renameSync(`${path}/${folderNameOld}`, `${path}/${folderNameNew}`))
+    // return ("folder rename success!");
+
+
 };
 
 //מחיקת תקייה
-const deleteFolder = (folderName) => {
-    const files = fs.readdirSync(`root/${folderName}`)
-    files.forEach(file => fs.unlinkSync(`root/${folderName}/${file}`))
-    fs.rmdirSync(`root/${folderName}`)
+const deleteFolder = (folderName, path) => {
+    if (fs.readdirSync(`${path}/${folderName}`).length === 0) {
+
+        // const files = fs.readdirSync(`${path}/${folderName}`)
+        // files.forEach(file => fs.unlinkSync(`./${path}/${folderName}/${file}`))
+        fs.rmdirSync(`./${path}/${folderName}`)
+    }
+    else {
+        console.log("the folder not empty");
+        throw { message: "Folder " + folderName + " is not empty" };
+    }
+    return ("folder has been deleted");
+
 }
 
 
-
 //הצגת התקיות
-const getDirectories = async source =>
-    fs.readdir('./root/', { withFileTypes: true }, (error, files) => {
-        if (error) throw error;
-        const directoriesInDIrectory = files
-            .filter((item) => item.isDirectory())
-            .map((item) => item.name);
-
-        console.log(directoriesInDIrectory);
-        return (directoriesInDIrectory);
-    });
+const getDirectories = (path) => {
+    return (
+        fs.readdirSync(`${path}`, { withFileTypes: true }, (error, files) => {
+            if (error) throw { error };
+            const directoriesInDIrectory = files
+                .filter((item) => item.isDirectory())
+            // .map((item) => item.name);
+            console.log(directoriesInDIrectory);
+            return (console.log("hii"), directoriesInDIrectory);
+        }))
+}
 
 
 
@@ -50,7 +62,7 @@ function isExist(folderName) {
 
 
 function isValidName(fileName = "") {
-    return ["/", "\\", "+", ":", "|", "?", "<", ">", '"'].find((char) =>
+    return ["/", "\\", "+", ":", "|", "?", "<", ">", '"', "."].find((char) =>
         fileName.includes(char)
     )
         ? false
@@ -62,7 +74,8 @@ const isValid = (req, res, next) => {
     if (isValidName(folderName)) {
         next();
     } else {
-        res.send("name is not valid");
+        res.status(error.code || 400).send({ message: "name is not valid" });
+        throw { message: "name is not valid" }
     }
 }
 
@@ -71,7 +84,9 @@ const isValidFolder = (req, res, next) => {
     if (isValidName(folderNameNew)) {
         next();
     } else {
-        res.send("name is not valid");
+        res.status(400).send({ message: "name is not valid" });
+        throw { message: "name is not valid" }
+
     }
 }
 
@@ -83,10 +98,10 @@ const isValidFolder = (req, res, next) => {
 //     return file
 // };
 
-const getFileByDir = async () => {
-    const file = await fileController.read({});
-    if (file.length === 0) throw ({ code: 400, message: "no file in this dir" })
-    return file
-};
-module.exports = { createFolder, isValid, isValidName, renameFolder, isValidFolder, deleteFolder, getDirectories, getFileByDir }
+// const getFileByDir = async () => {
+//     const file = await fileController.read({});
+//     if (file.length === 0) throw ({ code: 400, message: "no file in this dir" })
+//     return file
+// };
+module.exports = { createFolder, isValid, isValidName, renameFolder, isValidFolder, deleteFolder, getDirectories }
 

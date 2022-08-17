@@ -11,7 +11,7 @@ const upload = multer();
 //יצירת תקייה
 router.post("/creatfolder/:folderName/", isValid, async (req, res) => {
     try {
-        await folderLogic.createFolder(req.params.folderName, req.body.type, req.body.dir);
+        await folderLogic.createFolder(req.params.folderName, req.body.path, req.body.type);
         res.send("folder has been created");
         console.log("folder has been created");
 
@@ -24,20 +24,18 @@ router.post("/creatfolder/:folderName/", isValid, async (req, res) => {
 //שינוי שם תקיה
 router.put("/root", isValidFolder, async (req, res) => {
     try {
-        await folderLogic.renameFolder(req.body.folderNameOld, req.body.folderNameNew);
-        res.send("folder rename success!");
+        res.send(await folderLogic.renameFolder(req.body.folderNameOld, req.body.folderNameNew, req.body.path));
     } catch (error) {
-        res.send(error.message);
+        res.status(400).send({ message: error.message });
     }
 });
 
 //מחיקת תקייה
 router.delete("/root", async (req, res) => {
     try {
-        await folderLogic.deleteFolder(req.body.folderName);
-        res.send("folder has been deleted");
+        res.send(await folderLogic.deleteFolder(req.body.folderName, req.body.path));
     } catch (error) {
-        res.send(error.message);
+        res.status(error.code || 400).send({ message: error.message });
     }
 });
 
@@ -45,7 +43,12 @@ router.delete("/root", async (req, res) => {
 
 router.get("/root", async (req, res) => {
     try {
-        res.send(await folderLogic.getDirectories())
+        // console.log("michal");
+        const a = await folderLogic.getDirectories(req.query.path)
+        console.log(req.query.path);
+        res.send(folderLogic.getDirectories(req.query.path))
+        console.log(req.query.path);
+
     } catch (error) {
         res.send(error.message);
     }

@@ -5,63 +5,40 @@ const fileController = require("./DL/controllers/fileController");
 
 
 
-//העלאת קובץ לתקייה ראשית
-const saveFile = async (file, name, size, type, dir) => {
-  const files = { name, size, type, dir }
-  await fileController.create(files)
-  return (fs.writeFileSync(`./root/` + file.originalname, file.buffer), files
-  )
+//העלאת קובץ
+function saveFile(file, path) {
+  // if (fs.existsSync(`./${path}/${file.originalname, file.buffer}`)) throw { message: "file is already exist" };
+  fs.writeFileSync(`./${path}/` + file.originalname, file.buffer);
 }
-//-בבדיקה העלאת קובץ לתקייה משנית
-// function saveFile(file, folderPath) {
-//   const directoryPath = path.join(__dirname, `${folderPath}`);
 
-//   fs.writeFileSync(directoryPath + file.originalname, file.buffer);
-// }
+
 
 //מחיקת קובץ
-const deleteFile = (fileName) => {
-  if (!isExist(fileName)) throw { message: "File dosen't exist" };
-  fs.unlinkSync(`root/${fileName}`);
+const deleteFile = (fileName, path) => {
+  if (!isExist(fileName, path)) throw { message: "File dosen't exist" };
+  fs.unlinkSync(`${path}/${fileName}`);
 };
 
-//שינוי שם קובץ מתקיה ראשית
-const renameFile = (fileNameOld, fileNameNew) => {
-  if (!isExist(fileNameOld)) throw { message: "File dosen't exist" };
-  fs.renameSync(`root/${fileNameOld}`, `root/${fileNameNew}`)
+//שינוי שם קובץ 
+const renameFile = (fileNameOld, fileNameNew, path) => {
+  if (!isExist(fileNameOld, path)) throw { message: "File dosen't exist" };
+  fs.renameSync(`${path}/${fileNameOld}`, `${path}/${fileNameNew}`)
 };
 
-//הורדת קובץ-לא תקין
-const downFile = (fileName) => {
-  if (!isExist(fileName)) throw { message: "File dosen't exist" };
 
-  const url = `http://localhost:3000/root/${fileName}`;
-
-  http.get(url, (res) => {
-    const path = "Downloads";
-    const writeStream = fs.createWriteStream(path);
-
-    res.pipe(writeStream);
-
-    writeStream.on("finish", () => {
-      writeStream.close();
-      console.log("Download Completed!");
-    })
-  })
-}
-const showFiles = (folderPath) => {
-  const directoryPath = path.join(__dirname, `${folderPath}`);
-  // const directoryPath = path.join(__dirname, 'Documents');
-  fs.readdir(directoryPath, function (err, files) {
-    if (err) {
-      return console.log('Unable to scan directory: ' + err);
-    }
-    files.forEach(function (file) {
-      console.log(file);
-      return [file]
-    });
-  });
-}
+// const showFiles = (folderPath) => {
+//   const directoryPath = path.join(__dirname, `${folderPath}`);
+//   // const directoryPath = path.join(__dirname, 'Documents');
+//   fs.readdir(directoryPath, function (err, files) {
+//     if (err) {
+//       return console.log('Unable to scan directory: ' + err);
+//     }
+//     files.forEach(function (file) {
+//       console.log(file);
+//       return [file]
+//     });
+//   });
+// }
 
 
 
@@ -79,8 +56,8 @@ const showFiles = (folderPath) => {
 
 
 
-function isExist(fileName) {
-  return fs.existsSync(`./root/${fileName}`);
+function isExist(fileName, path) {
+  return fs.existsSync(`./${path}/${fileName}`);
 }
 
 //בדיקת שם 
@@ -114,5 +91,5 @@ const isValid = (req, res, next) => {
 
 
 module.exports = {
-  deleteFile, saveFile, renameFile, isValid, downFile, showFiles
+  deleteFile, saveFile, renameFile, isValid
 };
