@@ -7,8 +7,10 @@ const fileController = require("./DL/controllers/fileController");
 
 //העלאת קובץ
 function saveFile(file, path) {
-  // if (fs.existsSync(`./${path}/${file.originalname, file.buffer}`)) throw { message: "file is already exist" };
-  fs.writeFileSync(`./${path}/` + file.originalname, file.buffer);
+  if (fs.existsSync(`./${path}/${file.originalname}`)) throw { message: "file is already exist" };
+  else {
+    return (fs.writeFileSync(`./${path}/` + file.originalname, file.buffer))
+  }
 }
 
 
@@ -22,7 +24,9 @@ const deleteFile = (fileName, path) => {
 //שינוי שם קובץ 
 const renameFile = (fileNameOld, fileNameNew, path) => {
   if (!isExist(fileNameOld, path)) throw { message: "File dosen't exist" };
-  fs.renameSync(`${path}/${fileNameOld}`, `${path}/${fileNameNew}`)
+  if (fs.existsSync(`./${path}/${fileNameNew}`)) throw { message: "File  is already exist" };
+
+  return (fs.renameSync(`${path}/${fileNameOld}`, `${path}/${fileNameNew}`))
 };
 
 

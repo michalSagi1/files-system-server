@@ -21,12 +21,12 @@ const upload = multer();
 //העלאת קובץ
 router.post('/root', upload.single('fileName'), async (req, res) => {
   try {
-    fileLogic.saveFile(req.file, req.query.path)
+    await fileLogic.saveFile(req.file, req.query.path)
     // console.log(req.file.buffer);
     res.send("ok");
-  } catch {
-    res.status(400).json("error");
-    // console.log(error.message);
+  } catch (error) {
+    res.status(401).json("error");
+    console.log(error.message);
 
   }
 })
@@ -81,7 +81,7 @@ router.put("/root", isValid, async (req, res) => {
     await fileLogic.renameFile(req.body.fileNameOld, req.body.fileNameNew, req.body.path);
     res.send("file rename success!");
   } catch (error) {
-    res.send(error.message);
+    res.status(400).send(error.message);
   }
 });
 
