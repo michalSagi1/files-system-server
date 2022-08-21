@@ -14,5 +14,4 @@ app.use(express.json());
 app.use('/', require('./Routes'))
 
 app.listen(3000, () => console.log(`Server Up: ${PORT}`))
-require('./DL/db').connect();
 
