@@ -1,7 +1,6 @@
 const fs = require("fs");
-const http = require('http');
-const path = require('path');
-const fileController = require("./DL/controllers/fileController");
+// const http = require('http');
+// const path = require('path');
 
 
 
@@ -87,7 +86,8 @@ const isValid = (req, res, next) => {
   if (isValidName(fileNameNew) && isValidExtantions(fileNameNew)) {
     next();
   } else {
-    res.send("name is not valid");
+    res.status(400).send({ message: "name is not valid" });
+    throw { message: "name is not valid" }
   }
 }
 

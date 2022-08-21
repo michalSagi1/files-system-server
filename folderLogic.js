@@ -1,6 +1,4 @@
 const fs = require("fs");
-const { models } = require("mongoose");
-const fileController = require("./DL/controllers/fileController");
 
 
 //יצירת תקייה
