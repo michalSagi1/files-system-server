@@ -1,12 +1,11 @@
 const fs = require("fs");
-// const http = require('http');
-// const path = require('path');
+
 
 
 
 //העלאת קובץ
 function saveFile(file, path) {
-  if (fs.existsSync(`./${path}/${file.originalname}`)) throw { message: "file is already exist" };
+  if (fs.existsSync(`./${path}/${file.originalname}`)) throw { message: "file is already exists" };
   else {
     return (fs.writeFileSync(`./${path}/` + file.originalname, file.buffer))
   }
@@ -23,39 +22,10 @@ const deleteFile = (fileName, path) => {
 //שינוי שם קובץ 
 const renameFile = (fileNameOld, fileNameNew, path) => {
   if (!isExist(fileNameOld, path)) throw { message: "File dosen't exist" };
-  if (fs.existsSync(`./${path}/${fileNameNew}`)) throw { message: "File  is already exist" };
+  if (fs.existsSync(`./${path}/${fileNameNew}`)) throw { message: "File with this name already exists" };
 
   return (fs.renameSync(`${path}/${fileNameOld}`, `${path}/${fileNameNew}`))
 };
-
-
-// const showFiles = (folderPath) => {
-//   const directoryPath = path.join(__dirname, `${folderPath}`);
-//   // const directoryPath = path.join(__dirname, 'Documents');
-//   fs.readdir(directoryPath, function (err, files) {
-//     if (err) {
-//       return console.log('Unable to scan directory: ' + err);
-//     }
-//     files.forEach(function (file) {
-//       console.log(file);
-//       return [file]
-//     });
-//   });
-// }
-
-
-
-
-
-
-// const readFile = async (fileName) => {
-//   if (!isExist(fileName)) throw { message: "File dosen't exist" };
-//   const data = await fs.readFileSync(`uploads/${fileName}`, {
-//     encoding: "utf-8",
-//   });
-//   return data;
-// };
-
 
 
 
@@ -74,7 +44,7 @@ function isValidName(fileName = "") {
 
 function isValidExtantions(fileName = "") {
   let ext = fileName.slice(fileName.lastIndexOf("."));
-  return [".pdf", ".txt", ".png", ".jpg", ".js", ".html", ".css", ".jsx", ".ts"].find(
+  return [".pdf", ".txt", ".png", ".jpg", ".jpeg", ".js", ".html", ".css", ".jsx", ".ts", ".docx", ".zip", ".pptx", "xlsx"].find(
     (char) => ext == char
   )
     ? true
@@ -85,9 +55,9 @@ const isValid = (req, res, next) => {
   const { fileNameNew } = req.body;
   if (isValidName(fileNameNew) && isValidExtantions(fileNameNew)) {
     next();
-  } else {
-    res.status(400).send({ message: "name is not valid" });
-    throw { message: "name is not valid" }
+  } else if (!isValidExtantions(fileNameNew)) { res.status(400).send({ message: "Can't change name. Unsupported file type" }) }
+  else {
+    res.status(400).send({ message: "The file name can only contain letters and numbers" });
   }
 }
 

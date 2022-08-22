@@ -8,62 +8,19 @@ const multer = require('multer');
 const upload = multer();
 
 
-// const middleware = (req, res, next) => {
-//   console.log("path: " + req.query.path);
-//   const upload = multer({ dest: `${req.query.path}` });
-// const cpUpload = upload.fields([
-//   { name: "file", maxCount: 3 },
-// ]);
-// }
-
-
 
 //העלאת קובץ
 router.post('/root', upload.single('fileName'), async (req, res) => {
   try {
     await fileLogic.saveFile(req.file, req.query.path)
-    // console.log(req.file.buffer);
     res.send("ok");
   } catch (error) {
-    res.status(401).json("error");
+    res.status(401).send("error");
     console.log(error.message);
 
   }
 })
 
-
-
-
-// router.post('/root/', upload.single('fileName'), async (req, res) => {
-//   try {
-//     fileLogic.saveFile(req.file, req.body.name, req.body.type, req.body.size, req.body.dir)
-//     console.log(req.file);
-//     res.send("ok");
-//   } catch {
-//     res.status(400).json("error");
-//   }
-// })
-
-//העלאת קובץ לתקייה משנית
-
-//-בבדיקה העלאת קובץ לתקייה משנית
-// router.post('/root', upload.single('fileName'), async (req, res) => {
-//   try {
-//     fileLogic.saveFile(req.file, req.body.folderPath)
-//     res.send("ok");
-//   } catch {
-//     res.status(400).json("error");
-//   }
-// })
-
-// router.post('/root/:folder', upload.single('fileName'), async (req, res) => {
-//   try {
-//     fileLogic.saveFile(req.file, req.params.folder)
-//     res.send("ok");
-//   } catch {
-//     res.status(400).json("error");
-//   }
-// })
 
 // מחיקת קובץ 
 router.delete("/root", async (req, res) => {
@@ -81,7 +38,7 @@ router.put("/root", isValid, async (req, res) => {
     await fileLogic.renameFile(req.body.fileNameOld, req.body.fileNameNew, req.body.path);
     res.send("file rename success!");
   } catch (error) {
-    res.status(400).send(error.message);
+    res.status(400).send({ message: error.message });
   }
 });
 

@@ -16,7 +16,7 @@ router.post("/creatfolder/:folderName/", isValid, async (req, res) => {
         console.log("folder has been created");
 
     } catch (error) {
-        res.status(401).send(error.message);
+        res.status(401).send({ message: error.message });
         console.log(error.message);
     }
 });
@@ -43,9 +43,6 @@ router.delete("/root", async (req, res) => {
 
 router.get("/root", async (req, res) => {
     try {
-        // console.log("michal");
-        const a = await folderLogic.getDirectories(req.query.path)
-        console.log(req.query.path);
         res.send(folderLogic.getDirectories(req.query.path))
         console.log(req.query.path);
 
@@ -55,26 +52,7 @@ router.get("/root", async (req, res) => {
 });
 
 
-// router.get("/getFile", async (req, res) => {
-//     try {
-//         console.log(req.body);
-//         res.send(await folderLogic.getFileByDir(req.body.dir))
-//     }
-//     catch (error) {
-//         console.log(error.message);
-//         res.status(500).send({ message: "something wrong :( ..." })
-//     }
-// });
-router.get("/getFile", async (req, res) => {
-    try {
-        // console.log(req.body);
-        res.send(await folderLogic.getFileByDir())
-    }
-    catch (error) {
-        console.log(error.message);
-        res.status(500).send({ message: "something wrong :( ..." })
-    }
-});
+
 
 
 
